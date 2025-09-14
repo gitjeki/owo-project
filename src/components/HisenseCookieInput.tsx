@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import * as cheerio from "cheerio";
 
-export default function HisenseCookieInput() {
+export default function HisenseCookieInput({ onSuccess }: { onSuccess?: () => void }) {
   const [cookie, setCookie] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +29,6 @@ export default function HisenseCookieInput() {
       const $ = cheerio.load(html as string);
 
       const buttonText = $("button.dropdown-toggle").text().trim();
-
       return buttonText || null;
     } catch (err) {
       console.error(err);
@@ -48,9 +47,10 @@ export default function HisenseCookieInput() {
     }
 
     localStorage.setItem("hisense_cookie", cookie);
-    localStorage.setItem("nama", buttonValue as string);
+    localStorage.setItem("nama", buttonValue);
 
     alert(`PHPSESSID valid & disimpan!\nnama: ${buttonValue}`);
+    onSuccess?.(); // ✅ modal baru bisa ditutup kalau valid
   };
 
   return (
@@ -60,7 +60,7 @@ export default function HisenseCookieInput() {
         value={cookie}
         onChange={(e) => setCookie(e.target.value)}
         placeholder="Masukkan PHPSESSID"
-        className="border px-2 py-1 rounded w-64"
+        className="border px-2 py-1 rounded w-full"
       />
       <button
         onClick={handleSave}

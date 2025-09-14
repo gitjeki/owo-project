@@ -1,93 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import HisenseCookieInput from "@/components/HisenseCookieInput";
+import { useAppContext } from "@/context/AppProvider";
+import DkmDetails from "@/components/DkmDetails";
 
 export default function Home() {
-  const [id, setId] = useState<number>(1);
-  const [alasan, setAlasan] = useState("");
+  const { dkmData, isLoading, error, pendingCount, verifierName } = useAppContext(); 
 
-  const handleUpdate = async (status: "Terima" | "Tolak") => {
-    const payload = { id, status, alasan: status === "Tolak" ? alasan : undefined };
-
-    const res = await fetch("/api/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("auth_token") || "",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert(`Row ${id} berhasil diupdate!`);
-      setAlasan("");
-    } else {
-      alert("Gagal update: " + data.error);
+  const renderContent = () => {
+    if (isLoading) return <p>Mencari data spreadsheet untuk <b>{verifierName}</b>...</p>;
+    if (error) return <p className="text-red-500 font-bold bg-red-100 p-4 rounded-lg">Error: {error}</p>;
+    
+    if (pendingCount === 0 && !isLoading) {
+      return (
+        <div className="text-center bg-white rounded-lg shadow-md p-6">
+          <p className="text-2xl text-green-600 font-bold">🎉</p>
+          <p className="mt-2 font-semibold">Semua pekerjaan untuk <b>{verifierName}</b> sudah selesai!</p>
+        </div>
+      );
     }
-  };
+    
+    if (pendingCount !== null && pendingCount > 0 && !dkmData) {
+        return <p className="animate-pulse">Memuat detail pekerjaan berikutnya...</p>
+    }
 
-  const testHisense = async () => {
-    const res = await fetch("/api/hisense", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        path: "/status.php",
-        options: { method: "GET" },
-        cookie: localStorage.getItem("hisense_cookie") || "",
-      }),
-    });
-    const data = await res.json();
-    alert(JSON.stringify(data));
+    if (dkmData) {
+        return <DkmDetails data={dkmData} />
+    }
+    
+    return null;
   };
 
   return (
-    <main className="flex flex-col items-center p-8 gap-6">
-      <h1 className="text-2xl font-bold">Approval & Hisense Control</h1>
+    <div className="flex flex-col w-full h-full p-4 bg-gray-50">
+      <header className="flex justify-between items-center mb-4 flex-shrink-0">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Detail Pekerjaan
+        </h1>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="font-bold text-lg text-gray-800">{verifierName}</p>
+            <p className="text-xs text-gray-500">Verifier Aktif</p>
+          </div>
+          {pendingCount !== null && (
+            <div className="bg-blue-600 rounded-lg p-3 text-white text-center shadow-lg">
+              <p className="text-3xl font-bold leading-none">{pendingCount}</p>
+              <p className="text-xs font-semibold tracking-wider">DATA LAGI</p>
+            </div>
+          )}
+        </div>
+      </header>
 
-      <HisenseCookieInput />
-
-      <div className="flex flex-col gap-2">
-        <label className="flex gap-2 items-center">
-          <span>ID Row:</span>
-          <input
-            type="number"
-            value={id}
-            onChange={(e) => setId(Number(e.target.value))}
-            className="border px-2 py-1 rounded"
-          />
-        </label>
-
-        <textarea
-          placeholder="Alasan (isi kalau Tolak)"
-          value={alasan}
-          onChange={(e) => setAlasan(e.target.value)}
-          className="border w-64 h-24 p-2 rounded"
-        />
-      </div>
-
-      <div className="flex gap-4">
-        <button
-          onClick={() => handleUpdate("Terima")}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Terima
-        </button>
-        <button
-          onClick={() => handleUpdate("Tolak")}
-          className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-          Tolak
-        </button>
-      </div>
-
-      <button
-        onClick={testHisense}
-        className="bg-purple-600 text-white px-4 py-2 rounded"
-      >
-        Tes Hisense
-      </button>
-    </main>
+      <main className="flex-grow p-6 bg-white rounded-lg shadow-md">
+        {renderContent()}
+      </main>
+    </div>
   );
 }
