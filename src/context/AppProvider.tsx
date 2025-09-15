@@ -185,12 +185,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         const onClickAttribute = firstRow.attr("onclick");
         const urlMatch = onClickAttribute?.match(/window\.open\('([^']*)'/);
-        const nextPath = urlMatch ? urlMatch[1] : null;
+        let nextPath = urlMatch ? urlMatch[1] : null;
         if (!nextPath)
           throw new Error(
             "Gagal mengekstrak URL detail dari halaman monitoring."
           );
 
+        const queryString = nextPath.substring(nextPath.indexOf("?") + 1);
         const dkmHtml = await (
           await fetch("/api/hisense", {
             method: "POST",
@@ -199,7 +200,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           })
         ).text();
         const $dkm = cheerio.load(dkmHtml);
-
+        nextPath = '?' + queryString;
         const schoolInfo: { [key: string]: string } = {};
         $dkm('.filter-section input[type="text"]').each((_, el) => {
           const label = $dkm(el)
@@ -253,7 +254,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           itgla: new URLSearchParams(nextPath).get("itgla") || "",
           itgle: new URLSearchParams(nextPath).get("itgle") || "",
         };
-
         setDkmData(finalData);
         setEvaluationForm(defaultEvaluationValues);
       } catch (err: unknown) {
@@ -264,7 +264,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     },
     [handleSkip]
-  ); // <-- Jangan lupa tambahin handleSkip di sini
+  );
 
   useEffect(() => {
     const isReadyToFetch =
@@ -332,55 +332,157 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [currentRowIndex, allPendingRows, fetchDetailsForRow, isLoading]);
 
-  const updateSheetAndProceed = async () => {
-    setIsSubmitting(true);
-    setError(null);
-    try {
-      if (allPendingRows.length === 0)
-        throw new Error("Tidak ada data untuk diupdate.");
-      const currentRow = allPendingRows[currentRowIndex];
-      const allUpdates = { ...evaluationForm };
+  const generateRejectionMessage = useCallback(() => {
+    const rejectionReasons: { [key: string]: string } = {
+      H: "(5A) Geo Tagging tidak sesuai",
+      I: "(4A) Foto sekolah tidak sesuai",
+      J: "(4C) Foto Box dan PIC tidak sesuai",
+      K: "(2A) Foto kelengkapan IFP tidak lengkap",
+      L: "(3B) Serial number yang diinput tidak sesuai dengan yang tertera pada IFP",
+      N: "(1L) Data BAPP sekolah tidak sesuai (cek Barcode atas dan NPSN dengan foto sekolah atau NPSN yang diinput)",
+      O: "(1D) Ceklis BAPP tidak lengkap pada halaman 1",
+      Q: "(1K) Data penanda tangan pada halaman 1 dan halaman 2 BAPP tidak konsisten",
+      R: "(1O) Stempel pada BAPP halaman 2 tidak sesuai dengan sekolahnya",
+      S: "(1Q) Ceklis pada BAPP halaman 2 tidak sesuai",
+      T: "(1S) Tidak adanya pihak sekolah yang mengikuti pelatihan",
+      U: "(1A) Simpulan BAPP pada hal 2 belum dipilih atau dicoret",
+    };
 
-      const res = await fetch("/api/sheets/batch-update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "update",
-          sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
-          rowIndex: currentRow.rowIndex,
-          updates: allUpdates,
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.details || "Gagal batch update sheet.");
+    const specificReasons: { [key: string]: { [key: string]: string } } = {
+      L: {
+        "Tidak Terlihat":
+          "(3A) Foto serial number pada belakang unit IFP tidak jelas",
+        "Tidak Ada": "(3C) Foto Serial Number pada belakang unit IFP tidak ada",
+      },
+      O: {
+        "BAPP Tidak Jelas": "(1M) BAPP Halaman 1 tidak terlihat jelas",
+      },
+      Q: {
+        "Tidak Terdaftar di datadik":
+          "(1C) Pihak sekolah yang menandatangani BAPP tidak terdaftar dalam data Dapodik",
+      },
+      R: {
+        "Tidak Ada": "(1B) Tidak ada stempel sekolah pada BAPP",
+      },
+      S: {
+        "BAPP Tidak Jelas": "(1T) BAPP Halaman 2 tidak terlihat jelas",
+      },
+    };
+
+    const reasons = Object.entries(evaluationForm)
+      .filter(([key, value]) => {
+        const isDefault = defaultEvaluationValues[key] === value;
+        const isSpecificReject =
+          Object.keys(specificReasons[key] || {}).includes(value);
+        return !isDefault || isSpecificReject;
+      })
+      .map(([key, value]) => {
+        if (specificReasons[key] && specificReasons[key][value]) {
+          return specificReasons[key][value];
+        } else if (rejectionReasons[key] && value !== defaultEvaluationValues[key]) {
+          return rejectionReasons[key];
+        }
+        return null;
+      })
+      .filter(Boolean)
+      .join(", ");
+
+    return reasons;
+  }, [evaluationForm]);
+
+  const updateSheetAndProceed = useCallback(
+    async (action: "terima" | "tolak") => {
+      setIsSubmitting(true);
+      setError(null);
+      try {
+        if (allPendingRows.length === 0 || !dkmData)
+          throw new Error("Tidak ada data untuk diupdate.");
+
+        const cookie = localStorage.getItem("hisense_cookie");
+        if (!cookie) throw new Error("Cookie Hisense tidak ditemukan.");
+
+        let hisensePath = "r_dkm_apr_p.php?";
+        const params: Record<string, string> = {
+          q: dkmData.q,
+          s: "",
+          v: "",
+          npsn: dkmData.npsn,
+          iprop: dkmData.iprop,
+          ikab: dkmData.ikab,
+          ikec: dkmData.ikec,
+          iins: dkmData.iins,
+          ijenjang: dkmData.ijenjang,
+          ibp: dkmData.ibp,
+          iss: dkmData.iss,
+          isf: dkmData.isf,
+          istt: dkmData.istt,
+          itgl: dkmData.itgl,
+          itgla: dkmData.itgla,
+          itgle: dkmData.itgle,
+        };
+
+        const allUpdates: Record<string, string> = {};
+        
+        if (action === "terima") {
+          params.s = "A";
+        } else if (action === "tolak") {
+          params.s = "R";
+          const rejectionMessage = generateRejectionMessage();
+          params.v = rejectionMessage;
+        }
+
+        const hisenseQueryString = new URLSearchParams(params).toString();
+        hisensePath += hisenseQueryString;
+
+        // Panggil API Hisense
+        const hisenseRes = await fetch("/api/hisense", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: hisensePath, cookie }),
+        });
+
+        if (!hisenseRes.ok) {
+          throw new Error(`Gagal update Hisense: ${await hisenseRes.text()}`);
+        }
+
+        // Update Google Sheets
+        const currentRow = allPendingRows[currentRowIndex];
+        const res = await fetch("/api/sheets/batch-update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "update",
+            sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
+            rowIndex: currentRow.rowIndex,
+            updates: { ...allUpdates, ...evaluationForm },
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.details || "Gagal batch update sheet.");
+        }
+
+        const newRows = allPendingRows.filter(
+          (_, index) => index !== currentRowIndex
+        );
+        setAllPendingRows(newRows);
+
+        if (currentRowIndex >= newRows.length && newRows.length > 0) {
+          setCurrentRowIndex(0);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error) setError(err.message);
+        else setError("An unknown error occurred in updateSheetAndProceed.");
+      } finally {
+        setIsSubmitting(false);
       }
+    },
+    [allPendingRows, currentRowIndex, dkmData, evaluationForm, generateRejectionMessage]
+  );
 
-      const newRows = allPendingRows.filter(
-        (_, index) => index !== currentRowIndex
-      );
-      setAllPendingRows(newRows);
-
-      if (currentRowIndex >= newRows.length && newRows.length > 0) {
-        setCurrentRowIndex(0);
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message);
-      else setError("An unknown error occurred in updateSheetAndProceed.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleTerima = () => updateSheetAndProceed();
-  const handleTolak = () => {
-    const alasan = prompt(
-      "Masukkan alasan penolakan (akan ditulis di kolom KETERANGAN):"
-    );
-    if (alasan) {
-      updateSheetAndProceed();
-    }
-  };
+  const handleTerima = useCallback(() => updateSheetAndProceed("terima"), [updateSheetAndProceed]);
+  const handleTolak = useCallback(() => updateSheetAndProceed("tolak"), [updateSheetAndProceed]);
 
   useEffect(() => {
     const savedCookie = localStorage.getItem("hisense_cookie");

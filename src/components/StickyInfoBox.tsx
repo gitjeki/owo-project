@@ -1,71 +1,96 @@
 "use client";
 
-// [3] Hapus 'RefObject' karena tidak digunakan
-import { useRef } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import type { DkmData } from '@/context/AppProvider';
 import { useDraggable } from '@/hooks/useDraggable';
+import Fuse from 'fuse.js';
 
-// [2] Definisikan tipe untuk apiData untuk menggantikan 'any'
+interface Ptk {
+  nama: string;
+  jabatan_ptk?: string;
+  jenis_ptk?: string;
+}
+
 interface SchoolData {
   address: string;
   kecamatan: string;
   kabupaten: string;
   kepalaSekolah: string;
   name: string;
-  // tambahkan properti lain jika ada
 }
 
 interface StickyInfoBoxProps {
   formData: DkmData['schoolInfo'];
-  apiData: SchoolData; // Gunakan tipe yang sudah didefinisikan
+  apiData: SchoolData;
+  ptkList: Ptk[];
 }
 
 const cleanAndCompare = (val1?: string, val2?: string) => {
-    if (typeof val1 !== "string" || typeof val2 !== "string") return false;
-    return val1.trim().toLowerCase() === val2.trim().toLowerCase();
+  if (typeof val1 !== "string" || typeof val2 !== "string") return false;
+  return val1.trim().toLowerCase() === val2.trim().toLowerCase();
 };
 
-export default function StickyInfoBox({ formData, apiData }: StickyInfoBoxProps) {
-  // [1] Pindahkan pemanggilan Hooks ke bagian paling atas komponen
-  // Ini untuk mematuhi Aturan Pemanggilan Hooks
+export default function StickyInfoBox({ formData, apiData, ptkList }: StickyInfoBoxProps) {
   const boxRef = useRef<HTMLDivElement>(null!);
   const { position, handleMouseDown } = useDraggable<HTMLDivElement>(boxRef, "sticky-info-box");
-  
-  // Return awal (early return) sekarang aman dilakukan setelah Hooks dipanggil
-  if (!formData || !apiData) return null;
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Ptk[]>([]);
 
   const isAddressMatch = cleanAndCompare(formData.Alamat, apiData.address) &&
-                       cleanAndCompare(formData.Kecamatan, apiData.kecamatan) &&
-                       cleanAndCompare(formData.Kabupaten, apiData.kabupaten);
+    cleanAndCompare(formData.Kecamatan, apiData.kecamatan) &&
+    cleanAndCompare(formData.Kabupaten, apiData.kabupaten);
 
   const statusColor = isAddressMatch ? "#e8f5e9" : "#ffdddd";
   const borderColor = isAddressMatch ? "#66bb6a" : "#e57373";
 
+  // Fuse setup
+  const fuse = useMemo(() => {
+    const options = {
+      keys: ["nama"],
+      includeScore: true,
+      threshold: 0.4,
+    };
+    return new Fuse(ptkList, options);
+  }, [ptkList]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const result = fuse.search(query);
+    setSearchResults(result.map(r => r.item));
+  };
+
   return (
-    <div 
+    <div
       ref={boxRef}
-      style={{ 
-        position: 'fixed', 
+      style={{
+        position: 'fixed',
         top: `${position.y}px`,
         left: `${position.x}px`,
         zIndex: 1000,
-        maxWidth: '300px', 
-        padding: '0',
+        maxWidth: '320px',
         borderRadius: '8px',
-        fontFamily: 'sans-serif', 
+        fontFamily: 'sans-serif',
         boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-        backgroundColor: statusColor, 
+        backgroundColor: statusColor,
         border: `2px solid ${borderColor}`,
-        transition: 'background-color 0.3s, border-color 0.3s'
       }}
     >
-      <div 
+      <div
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
-        style={{ 
+        style={{
           padding: '8px 18px',
           cursor: 'move',
           borderBottom: `1px solid ${borderColor}`,
+          backgroundColor: '#f0f0f0',
           borderTopLeftRadius: '6px',
           borderTopRightRadius: '6px',
         }}
@@ -74,11 +99,72 @@ export default function StickyInfoBox({ formData, apiData }: StickyInfoBoxProps)
         <div style={{ fontSize: '12px', color: '#555' }}>NPSN: {formData.NPSN}</div>
       </div>
 
-      <div style={{ padding: '8px 18px 12px 18px' }}>
+      <div style={{ padding: '12px 18px' }}>
         <div style={{ fontWeight: 'bold', fontSize: '13px', color: '#555' }}>Serial Number</div>
-        <div style={{ fontSize: '16px', fontWeight: 600, color: '#000', wordWrap: 'break-word' }}>{formData['Serial Number']}</div>
-        <div style={{ marginTop: '8px', fontSize: '12px', color: '#333' }}><b>Alamat API:</b> {apiData.address || 'N/A'}</div>
-        <div style={{ marginTop: '5px', fontSize: '12px', fontWeight: 'bold', color: '#0056b3' }}><b>Kepala Sekolah:</b> {apiData.kepalaSekolah || "N/A"}</div>
+        <div style={{ fontSize: '16px', fontWeight: 600, color: '#000' }}>{formData['Serial Number']}</div>
+        
+        {/* ================= Alamat dari kedua sumber ================= */}
+        <div style={{ marginTop: '12px', border: '1px solid #ccc', borderRadius: '4px', padding: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+            Alamat (Form & API)
+          </div>
+          <div style={{ fontSize: '12px', color: '#333', lineHeight: '1.4' }}>
+            <b>Form:</b> {formData.Alamat}, {formData.Kecamatan}, {formData.Kabupaten}
+          </div>
+          <div style={{ fontSize: '12px', color: '#333', lineHeight: '1.4' }}>
+            <b>API:</b> {apiData.address}, {apiData.kecamatan}, {apiData.kabupaten}
+          </div>
+        </div>
+        {/* ========================================================== */}
+
+        <div style={{ marginTop: '8px', fontSize: '12px', fontWeight: 'bold', color: '#0056b3' }}>
+          <b>Kepala Sekolah:</b> {apiData.kepalaSekolah}
+        </div>
+
+        {/* ================= PTK Search Box ================= */}
+        <div style={{ marginTop: '12px' }}>
+          <input
+            type="text"
+            placeholder="Cari PTK..."
+            value={searchQuery}
+            onChange={handleSearch}
+            style={{
+              width: '100%',
+              padding: '6px 10px',
+              fontSize: '13px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              outline: 'none',
+            }}
+          />
+
+          <div style={{
+            marginTop: '6px',
+            maxHeight: '140px',
+            overflowY: 'auto',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            backgroundColor: '#fff'
+          }}>
+            {searchQuery && searchResults.length === 0 && (
+              <div style={{ padding: '8px', fontSize: '12px', textAlign: 'center', color: '#888' }}>
+                PTK tidak ditemukan.
+              </div>
+            )}
+            {searchResults.map((ptk, i) => (
+              <div key={i} style={{ padding: '8px', borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#333' }}>{ptk.nama}</div>
+                <div style={{ fontSize: '11px', color: '#666' }}>{ptk.jabatan_ptk || ptk.jenis_ptk}</div>
+              </div>
+            ))}
+            {!searchQuery && (
+              <div style={{ padding: '8px', fontSize: '12px', textAlign: 'center', color: '#aaa' }}>
+                Cari nama guru/staff di sini...
+              </div>
+            )}
+          </div>
+        </div>
+        {/* ================================================== */}
       </div>
     </div>
   );

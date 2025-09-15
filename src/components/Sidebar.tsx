@@ -22,7 +22,7 @@ const evaluationFields: EvaluationField[] = [
     { col: "L", label: "FOTO SERIAL NUMBER", options: ["Sesuai", "Tidak Sesuai", "Tidak Ada", "Tidak Terlihat"] },
     { col: "N", label: "Barcode BAPP", options: ["Sesuai", "Tidak Sesuai"] },
     { col: "O", label: "Ceklis BAPP Hal 1", options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas"] },
-    { col: "Q", label: "Nama Penandatangan BAPP", options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar"] },
+    { col: "Q", label: "Nama Penandatangan BAPP", options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di datadik"] },
     { col: "R", label: "Stempel", options: ["Sesuai", "Tidak Sesuai", "Tidak Ada"] },
     { col: "S", label: "Ceklis BAPP Hal 2", options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas"] },
     { col: "T", label: "Peserta Pelatihan", options: ["Ada", "Tidak Ada"] },
