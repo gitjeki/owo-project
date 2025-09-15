@@ -66,6 +66,8 @@ interface AppContextType {
   setEvaluationForm: React.Dispatch<
     React.SetStateAction<Record<string, string>>
   >;
+  customReason: string;
+  setCustomReason: React.Dispatch<React.SetStateAction<string>>;
   handleTerima: () => void;
   handleTolak: () => void;
   handleSkip: () => void;
@@ -91,6 +93,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [evaluationForm, setEvaluationForm] = useState<Record<string, string>>(
     defaultEvaluationValues
   );
+  const [customReason, setCustomReason] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -200,7 +203,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           })
         ).text();
         const $dkm = cheerio.load(dkmHtml);
-        nextPath = '?' + queryString;
+        nextPath = "?" + queryString;
         const schoolInfo: { [key: string]: string } = {};
         $dkm('.filter-section input[type="text"]').each((_, el) => {
           const label = $dkm(el)
@@ -374,14 +377,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const reasons = Object.entries(evaluationForm)
       .filter(([key, value]) => {
         const isDefault = defaultEvaluationValues[key] === value;
-        const isSpecificReject =
-          Object.keys(specificReasons[key] || {}).includes(value);
+        const isSpecificReject = Object.keys(
+          specificReasons[key] || {}
+        ).includes(value);
         return !isDefault || isSpecificReject;
       })
       .map(([key, value]) => {
         if (specificReasons[key] && specificReasons[key][value]) {
           return specificReasons[key][value];
-        } else if (rejectionReasons[key] && value !== defaultEvaluationValues[key]) {
+        } else if (
+          rejectionReasons[key] &&
+          value !== defaultEvaluationValues[key]
+        ) {
           return rejectionReasons[key];
         }
         return null;
@@ -391,6 +398,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     return reasons;
   }, [evaluationForm]);
+
+  // Setiap kali evaluationForm berubah, update customReason
+  useEffect(() => {
+    setCustomReason(generateRejectionMessage());
+  }, [generateRejectionMessage]);
 
   const updateSheetAndProceed = useCallback(
     async (action: "terima" | "tolak") => {
@@ -424,13 +436,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         };
 
         const allUpdates: Record<string, string> = {};
-        
+
         if (action === "terima") {
           params.s = "A";
         } else if (action === "tolak") {
           params.s = "R";
-          const rejectionMessage = generateRejectionMessage();
-          params.v = rejectionMessage;
+          params.v = customReason;
         }
 
         const hisenseQueryString = new URLSearchParams(params).toString();
@@ -480,11 +491,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setIsSubmitting(false);
       }
     },
-    [allPendingRows, currentRowIndex, dkmData, evaluationForm, generateRejectionMessage]
+    [allPendingRows, currentRowIndex, dkmData, evaluationForm, customReason]
   );
 
-  const handleTerima = useCallback(() => updateSheetAndProceed("terima"), [updateSheetAndProceed]);
-  const handleTolak = useCallback(() => updateSheetAndProceed("tolak"), [updateSheetAndProceed]);
+  const handleTerima = useCallback(
+    () => updateSheetAndProceed("terima"),
+    [updateSheetAndProceed]
+  );
+  const handleTolak = useCallback(
+    () => updateSheetAndProceed("tolak"),
+    [updateSheetAndProceed]
+  );
 
   useEffect(() => {
     const savedCookie = localStorage.getItem("hisense_cookie");
@@ -536,7 +553,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         <p>Silakan login dengan Google untuk melanjutkan.</p>
         <button
           onClick={() => signIn("google")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
           Login Google
         </button>
       </div>
@@ -560,7 +578,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         handleSkip,
         isSidebarOpen,
         toggleSidebar,
-      }}>
+        customReason,
+        setCustomReason,
+      }}
+    >
       <div className="flex h-screen bg-gray-200">
         <Sidebar />
         <main className="relative flex-grow p-6 overflow-y-auto bg-gray-100 text-gray-900">
