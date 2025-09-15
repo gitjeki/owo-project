@@ -4,64 +4,107 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 
-// [1] REKOMENDASI: Definisikan tipe untuk body request agar API lebih robust
-interface BatchUpdateRequestBody {
+interface UnifiedRequestBody {
   sheetId: string;
   rowIndex: number;
-  updates: Record<string, string | number>; // Objek dengan key string dan value string/number
+  action: "update" | "formatSkip"; 
+  updates?: Record<string, string | number>; 
 }
 
 export async function POST(req: Request) {
-  // [2] Gunakan tipe Session yang sudah kita augment di file next-auth.d.ts
   const session: Session | null = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Gunakan tipe yang sudah didefinisikan untuk request body
-  const { sheetId, rowIndex, updates }: BatchUpdateRequestBody = await req.json();
-  
-  if (!sheetId || !rowIndex || !updates) {
+  const { sheetId, rowIndex, updates, action }: UnifiedRequestBody =
+    await req.json();
+
+  if (!sheetId || !rowIndex || !action) {
     return NextResponse.json(
-      { error: "Parameter tidak lengkap (sheetId, rowIndex, updates)" },
+      { error: "Parameter tidak lengkap (sheetId, rowIndex, action)" },
       { status: 400 }
     );
   }
-  
+
   try {
     const auth = new google.auth.OAuth2();
     auth.setCredentials({ access_token: session.accessToken });
     const sheets = google.sheets({ version: "v4", auth });
 
-    // Ubah objek updates menjadi format yang dibutuhkan batchUpdate
-    const data = Object.entries(updates).map(([column, value]) => ({
-      range: `'Lembar Kerja'!${column}${rowIndex}`,
-      values: [[value]],
-    }));
-
-    const response = await sheets.spreadsheets.values.batchUpdate({
-      spreadsheetId: sheetId,
-      requestBody: {
-        valueInputOption: "USER_ENTERED",
-        data: data,
-      },
-    });
-
-    return NextResponse.json({ success: true, data: response.data });
-
-  } catch (error: unknown) { // [3] Ganti `any` dengan `unknown` untuk penanganan error yang aman
+    if (action === "update") {
+      if (!updates) {
+        return NextResponse.json(
+          { error: "Parameter 'updates' dibutuhkan untuk action 'update'" },
+          { status: 400 }
+        );
+      }
+      const data = Object.entries(updates).map(([column, value]) => ({
+        range: `'Lembar Kerja'!${column}${rowIndex}`,
+        values: [[value]],
+      }));
+      const response = await sheets.spreadsheets.values.batchUpdate({
+        spreadsheetId: sheetId,
+        requestBody: { valueInputOption: "USER_ENTERED", data: data },
+      });
+      return NextResponse.json({ success: true, data: response.data });
+    } else if (action === "formatSkip") {
+      const requests = [
+        {
+          repeatCell: {
+            range: {
+              sheetId: 966309158,
+              startRowIndex: rowIndex - 1,
+              endRowIndex: rowIndex,
+              startColumnIndex: 7,
+              endColumnIndex: 22,
+            },
+            cell: {
+              userEnteredFormat: {
+                backgroundColor: { red: 0.85, green: 0.85, blue: 0.85 },
+              },
+            },
+            fields: "userEnteredFormat.backgroundColor",
+          },
+        },
+        {
+          updateCells: {
+            range: {
+              sheetId: 966309158,
+              startRowIndex: rowIndex - 1,
+              endRowIndex: rowIndex,
+              startColumnIndex: 21,
+              endColumnIndex: 22,
+            },
+            rows: [
+              { values: [{ userEnteredValue: { stringValue: "HITAM" } }] },
+            ],
+            fields: "userEnteredValue",
+          },
+        },
+      ];
+      const response = await sheets.spreadsheets.batchUpdate({
+        spreadsheetId: sheetId,
+        requestBody: { requests: requests },
+      });
+      return NextResponse.json({
+        success: true,
+        message: "Pewarnaan dan update skip berhasil",
+        data: response.data,
+      });
+    }
+  } catch (error: unknown) {
     let errorMessage = "Terjadi kesalahan saat mengupdate Google Sheets.";
-    
     if (error instanceof Error) {
       errorMessage = error.message;
     }
-
     console.error("Google Sheets API Batch Update Error:", error);
-    
     return NextResponse.json(
       { error: "Gagal mengupdate Google Sheets.", details: errorMessage },
       { status: 500 }
     );
   }
+  // Tambahan: handle jika action tidak valid
+  return NextResponse.json({ error: "Action tidak valid" }, { status: 400 });
 }
