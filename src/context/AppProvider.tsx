@@ -355,6 +355,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "Tidak Ada": "(3C) Foto Serial Number pada belakang unit IFP tidak ada",
       },
       O: {
+        "Tidak Sesuai": "(1D) Ceklis BAPP tidak sesuai pada halaman 1",
         "BAPP Tidak Jelas": "(1M) BAPP Halaman 1 tidak terlihat jelas",
       },
       Q: {
@@ -365,6 +366,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "Tidak Ada": "(1B) Tidak ada stempel sekolah pada BAPP",
       },
       S: {
+        "Tidak Sesuai": "(1Q) Ceklis BAPP tidak sesuai pada halaman 2",
         "BAPP Tidak Jelas": "(1T) BAPP Halaman 2 tidak terlihat jelas",
       },
     };
