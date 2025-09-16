@@ -60,7 +60,7 @@ export default function HisenseCookieInput({ onSuccess }: { onSuccess?: () => vo
         value={cookie}
         onChange={(e) => setCookie(e.target.value)}
         placeholder="Masukkan PHPSESSID"
-        className="border px-2 py-1 rounded w-full"
+        className="border px-2 py-1 rounded w-full text-black"
       />
       <button
         onClick={handleSave}

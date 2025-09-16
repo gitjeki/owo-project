@@ -9,6 +9,7 @@ import React, {
   useCallback,
 } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { validateHisenseCookie } from "@/helpers/HisenseCookie";
 import * as cheerio from "cheerio";
 import HisenseCookieInput from "@/components/HisenseCookieInput";
 import Sidebar from "@/components/Sidebar";
@@ -160,6 +161,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         const cookie = localStorage.getItem("hisense_cookie");
         if (!cookie) throw new Error("Cookie Hisense tidak ditemukan.");
+
+        const validName = await validateHisenseCookie(cookie);
+        if (!validName) {
+          setCookieValid(false);
+          setVerifierName(null);
+          setShowCookieModal(true);
+          setIsSubmitting(false);
+          setError("Cookie Hisense kadaluarsa atau tidak valid.");
+          return;
+        }
 
         const monitoringHtml = await (
           await fetch("/api/hisense", {
@@ -415,6 +426,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const cookie = localStorage.getItem("hisense_cookie");
         if (!cookie) throw new Error("Cookie Hisense tidak ditemukan.");
 
+        const validName = await validateHisenseCookie(cookie);
+        if (!validName) {
+          setCookieValid(false);
+          setVerifierName(null);
+          setShowCookieModal(true);
+          setIsSubmitting(false);
+          setError("Cookie Hisense kadaluarsa atau tidak valid.");
+          return;
+        }
+
         let hisensePath = "r_dkm_apr_p.php?";
         const params: Record<string, string> = {
           q: dkmData.q,
@@ -506,10 +527,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const savedCookie = localStorage.getItem("hisense_cookie");
     const savedName = localStorage.getItem("nama");
+
     if (savedCookie && savedName) {
-      setCookieValid(true);
-      setVerifierName(savedName);
-      setShowCookieModal(false);
+      validateHisenseCookie(savedCookie).then((validName) => {
+        if (validName) {
+          setCookieValid(true);
+          setVerifierName(validName);
+          setShowCookieModal(false);
+        } else {
+          setCookieValid(false);
+          setVerifierName(null);
+          setShowCookieModal(true);
+        }
+      });
     } else {
       setShowCookieModal(true);
     }
@@ -537,7 +567,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             Masukkan PHPSESSID
           </h2>
           <HisenseCookieInput onSuccess={handleCookieSuccess} />
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-black">
             Cookie harus valid untuk melanjutkan.
           </p>
         </div>

@@ -25,6 +25,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 
     if (!response.ok) throw refreshedTokens;
 
+    console.log("Access token berhasil di-refresh:", refreshedTokens.access_token);
+
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
