@@ -109,9 +109,10 @@ export default function Sidebar() {
     setEvaluationForm((prev) => ({ ...prev, [col]: value }));
   };
 
-  const isFormDefault = Object.entries(defaultEvaluationValues).every(
-    ([col, val]) => evaluationForm[col] === val
-  );
+  const isFormDefault =
+    Object.entries(defaultEvaluationValues).every(
+      ([col, val]) => evaluationForm[col] === val
+    ) && customReason.trim() === "";
   const buttonsDisabled =
     isSubmitting || pendingCount === null || pendingCount === 0;
   // Satu tombol dinamis: jika form default maka TERIMA, jika tidak maka TOLAK
@@ -166,7 +167,7 @@ export default function Sidebar() {
       <div className="border-t border-gray-700 pt-4 mt-4 flex-shrink-0">
         <div className="flex gap-2">
           <button
-            onClick={handleSkip}
+            onClick={() => handleSkip(true)}
             disabled={buttonsDisabled}
             className="flex-1 p-3 bg-gray-500 rounded-md text-white font-bold hover:bg-gray-400 disabled:opacity-50 transition-colors"
           >

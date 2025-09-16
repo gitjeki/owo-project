@@ -71,7 +71,7 @@ interface AppContextType {
   setCustomReason: React.Dispatch<React.SetStateAction<string>>;
   handleTerima: () => void;
   handleTolak: () => void;
-  handleSkip: () => void;
+  handleSkip: (isValidData: boolean) => void;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
 }
@@ -99,51 +99,54 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
-  const handleSkip = useCallback(async () => {
-    if (allPendingRows.length === 0) return;
-    if (allPendingRows.length === 1) {
-      const currentRow = allPendingRows[0];
+  const handleSkip = useCallback(
+    async (isValidData: boolean) => {
+      if (allPendingRows.length === 0) return;
+      if (allPendingRows.length === 1) {
+        const currentRow = allPendingRows[0];
+        try {
+          await fetch("/api/sheets/batch-update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: isValidData ? "formatSkip" : "formatSkipHitam",
+              sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
+              rowIndex: currentRow.rowIndex,
+            }),
+          });
+        } catch (error) {
+          console.error("Gagal format baris skip terakhir:", error);
+        }
+        setAllPendingRows([]);
+        return;
+      }
+
+      const currentRow = allPendingRows[currentRowIndex];
+
       try {
         await fetch("/api/sheets/batch-update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            action: "formatSkip",
+            action: isValidData ? "formatSkip" : "formatSkipHitam",
             sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
             rowIndex: currentRow.rowIndex,
           }),
         });
       } catch (error) {
-        console.error("Gagal format baris skip terakhir:", error);
+        console.error("Gagal format baris skip:", error);
+      } finally {
+        const newRows = allPendingRows.filter(
+          (_, index) => index !== currentRowIndex
+        );
+        setAllPendingRows([...newRows, currentRow]); // Pindahkan ke akhir
+        if (currentRowIndex >= newRows.length && newRows.length > 0) {
+          setCurrentRowIndex(0);
+        }
       }
-      setAllPendingRows([]);
-      return;
-    }
-
-    const currentRow = allPendingRows[currentRowIndex];
-
-    try {
-      await fetch("/api/sheets/batch-update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "formatSkip",
-          sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
-          rowIndex: currentRow.rowIndex,
-        }),
-      });
-    } catch (error) {
-      console.error("Gagal format baris skip:", error);
-    } finally {
-      const newRows = allPendingRows.filter(
-        (_, index) => index !== currentRowIndex
-      );
-      setAllPendingRows(newRows);
-      if (currentRowIndex >= newRows.length && newRows.length > 0) {
-        setCurrentRowIndex(0);
-      }
-    }
-  }, [allPendingRows, currentRowIndex]);
+    },
+    [allPendingRows, currentRowIndex]
+  );
 
   // Fungsi fetchDetailsForRow yang sudah di-upgrade
   const fetchDetailsForRow = useCallback(
@@ -192,7 +195,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         if (!firstTdStyle || !firstTdStyle.includes("color:green")) {
           console.log(`Auto-skipping NPSN: ${npsn} karena warna bukan hijau.`);
-          handleSkip();
+          handleSkip(false);
           setIsFetchingDetails(false);
           return;
         }

@@ -7,8 +7,8 @@ import { NextResponse } from "next/server";
 interface UnifiedRequestBody {
   sheetId: string;
   rowIndex: number;
-  action: "update" | "formatSkip"; 
-  updates?: Record<string, string | number>; 
+  action: "update" | "formatSkip" | "formatSkipHitam";
+  updates?: Record<string, string | number>;
 }
 
 export async function POST(req: Request) {
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         requestBody: { valueInputOption: "USER_ENTERED", data: data },
       });
       return NextResponse.json({ success: true, data: response.data });
-    } else if (action === "formatSkip") {
+    } else {
       const requests = [
         {
           repeatCell: {
@@ -62,7 +62,10 @@ export async function POST(req: Request) {
             },
             cell: {
               userEnteredFormat: {
-                backgroundColor: { red: 0.85, green: 0.85, blue: 0.85 },
+                backgroundColor:
+                  action === "formatSkip"
+                    ? { red: 1, green: 1, blue: 1 }
+                    : { red: 0.85, green: 0.85, blue: 0.85 },
               },
             },
             fields: "userEnteredFormat.backgroundColor",
@@ -78,7 +81,15 @@ export async function POST(req: Request) {
               endColumnIndex: 22,
             },
             rows: [
-              { values: [{ userEnteredValue: { stringValue: "HITAM" } }] },
+              {
+                values: [
+                  {
+                    userEnteredValue: {
+                      stringValue: action === "formatSkip" ? null : "Hitam",
+                    },
+                  },
+                ],
+              },
             ],
             fields: "userEnteredValue",
           },
