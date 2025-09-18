@@ -52,10 +52,16 @@ export async function POST(req: Request) {
       }));
       // jika ada customReason, masukkan ke kolom W
       if (customReason) {
-        data.push({
-          range: `'Lembar Kerja'!W${rowIndex}`,
-          values: [[customReason]],
-        });
+        data.push(
+          {
+            range: `'Lembar Kerja'!W${rowIndex}`,
+            values: [[customReason]],
+          },
+          {
+            range: `'Lembar Kerja'!V${rowIndex}`,
+            values: [["DITOLAK"]],
+          }
+        );
       }
 
       const response = await sheets.spreadsheets.values.batchUpdate({
