@@ -9,6 +9,7 @@ interface UnifiedRequestBody {
   rowIndex: number;
   action: "update" | "formatSkip" | "formatSkipHitam";
   updates?: Record<string, string | number>;
+  customReason?: string;
 }
 
 export async function POST(req: Request) {
@@ -18,8 +19,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { sheetId, rowIndex, updates, action }: UnifiedRequestBody =
-    await req.json();
+  const {
+    sheetId,
+    rowIndex,
+    updates,
+    action,
+    customReason,
+  }: UnifiedRequestBody = await req.json();
 
   if (!sheetId || !rowIndex || !action) {
     return NextResponse.json(
@@ -44,10 +50,19 @@ export async function POST(req: Request) {
         range: `'Lembar Kerja'!${column}${rowIndex}`,
         values: [[value]],
       }));
+      // jika ada customReason, masukkan ke kolom W
+      if (customReason) {
+        data.push({
+          range: `'Lembar Kerja'!W${rowIndex}`,
+          values: [[customReason]],
+        });
+      }
+
       const response = await sheets.spreadsheets.values.batchUpdate({
         spreadsheetId: sheetId,
         requestBody: { valueInputOption: "USER_ENTERED", data: data },
       });
+
       return NextResponse.json({ success: true, data: response.data });
     } else {
       const requests = [

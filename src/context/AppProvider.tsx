@@ -360,7 +360,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       O: "(1D) Ceklis BAPP tidak lengkap pada halaman 1",
       Q: "(1K) Data penanda tangan pada halaman 1 dan halaman 2 BAPP tidak konsisten",
       R: "(1O) Stempel pada BAPP halaman 2 tidak sesuai dengan sekolahnya",
-      S: "(1Q) Ceklis pada BAPP halaman 2 tidak sesuai",
+      S: "(1Q) Ceklis pada BAPP halaman 2 tidak lengkap",
       T: "(1S) Tidak adanya pihak sekolah yang mengikuti pelatihan",
       U: "(1A) Simpulan BAPP pada hal 2 belum dipilih atau dicoret",
     };
@@ -492,6 +492,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
             sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
             rowIndex: currentRow.rowIndex,
             updates: { ...allUpdates, ...evaluationForm },
+            customReason:
+              customReason && customReason != generateRejectionMessage()
+                ? customReason
+                : null,
           }),
         });
 
