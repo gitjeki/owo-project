@@ -41,12 +41,12 @@ const evaluationFields: EvaluationField[] = [
   {
     col: "O",
     label: "Ceklis BAPP Hal 1",
-    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas"],
+    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas", "Surat Tugas Tidak Ada"],
   },
   {
     col: "Q",
     label: "Nama Penandatangan BAPP",
-    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di datadik"],
+    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di datadik", "PIC tidak sama"],
   },
   {
     col: "R",

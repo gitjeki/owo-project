@@ -374,10 +374,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       O: {
         "Tidak Sesuai": "(1D) Ceklis BAPP tidak sesuai pada halaman 1",
         "BAPP Tidak Jelas": "(1M) BAPP Halaman 1 tidak terlihat jelas",
+        "Surat Tugas Tidak Ada": "(1V) Nomor surat tugas pada halaman 1 tidak ada",
       },
       Q: {
         "Tidak Terdaftar di datadik":
           "(1C) Pihak sekolah yang menandatangani BAPP tidak terdaftar dalam data Dapodik",
+        "PIC tidak sama":
+          "(1U) PIC berbeda dari pihak sekolah di BAPP",
       },
       R: {
         "Tidak Ada": "(1B) Tidak ada stempel sekolah pada BAPP",
