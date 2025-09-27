@@ -106,7 +106,7 @@ export async function POST(req: Request) {
                 values: [
                   {
                     userEnteredValue: {
-                      stringValue: action === "formatSkip" ? null : "Hitam",
+                      stringValue: action === "formatSkip" ? null : "HITAM",
                     },
                   },
                 ],
