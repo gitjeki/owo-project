@@ -46,7 +46,7 @@ const evaluationFields: EvaluationField[] = [
   {
     col: "S",
     label: "NAMA PENANDATANGANAN BAPP",
-    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di Datadik", "PIC Tidak Sama", "TTD Tidak Ada"],
+    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di Datadik", "PIC Tidak Sama", "TTD Tidak Ada", "NIP Tidak Ada"],
   },
   {
     col: "T",
