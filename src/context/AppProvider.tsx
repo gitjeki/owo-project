@@ -384,6 +384,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           "(1U) PIC dari pihak sekolah berbeda dengan yang di BAPP",
         "TTD Tidak Ada":
           "(1X) Tidak ada tanda tangan dari pihak sekolah",
+        "NIP Tidak Ada":
+          "(1AA) NIP penandatangan pihak sekolah tidak ada (jika tidak ada bisa isi strip)",
       },
       T: {
         "Tidak Ada": "(1B) Tidak ada stempel sekolah pada BAPP",
