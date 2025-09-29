@@ -460,8 +460,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           ihnd: dkmData.hisense.ihnd || "",
         };
 
-        const allUpdates: Record<string, string> = {};
-
         if (action === "terima") {
           params.s = "A";
         } else if (action === "tolak") {

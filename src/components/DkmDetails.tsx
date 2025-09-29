@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import type { DkmData } from '@/context/AppProvider';
 import StickyInfoBox from './StickyInfoBox';
+import type { HisenseData, HisenseProcessHistory } from '@/context/AppProvider';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const InfoField = ({ label, value, colSpan, isMismatched }: { label: string; value: string; colSpan: string; isMismatched: boolean }) => (
@@ -22,9 +23,9 @@ export default function DkmDetails({ data }: { data: DkmData }) {
     const datadik = data.datadik || {};
     const ptkList = datadik.ptk || [];
     const hisense = data.hisense;
-    const schoolInfo = (hisense as any).schoolInfo || {};
-    const images = (hisense as any).images || {};
-    const processHistory = (hisense as any).processHistory || [];
+    const schoolInfo = (hisense as HisenseData).schoolInfo || {};
+    const images = (hisense as HisenseData).images || {};
+    const processHistory = (hisense as HisenseData).processHistory || [];
     const imageList = Object.values(images);
 
     // Fungsi bandingkan string
@@ -83,26 +84,26 @@ export default function DkmDetails({ data }: { data: DkmData }) {
             <div className="w-full bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-12 gap-4">
-                        <InfoField label="NPSN" value={schoolInfo.NPSN} colSpan="col-span-12 md:col-span-2" isMismatched={false} />
-                        <InfoField label="Nama" value={schoolInfo.Nama} colSpan="col-span-12 md:col-span-4" isMismatched={!!mismatches['Nama']} />
-                        <InfoField label="Alamat" value={schoolInfo.Alamat} colSpan="col-span-12 md:col-span-6" isMismatched={!!mismatches['Alamat']} />
+                        <InfoField label="NPSN" value={schoolInfo.NPSN || ''} colSpan="col-span-12 md:col-span-2" isMismatched={false} />
+                        <InfoField label="Nama" value={schoolInfo.Nama || ''} colSpan="col-span-12 md:col-span-4" isMismatched={!!mismatches['Nama']} />
+                        <InfoField label="Alamat" value={schoolInfo.Alamat || ''} colSpan="col-span-12 md:col-span-6" isMismatched={!!mismatches['Alamat']} />
                     </div>
                     <div className="grid grid-cols-12 gap-4">
-                        <InfoField label="Provinsi" value={schoolInfo.Provinsi} colSpan="col-span-6 md:col-span-2" isMismatched={false} />
-                        <InfoField label="Kabupaten" value={schoolInfo.Kabupaten} colSpan="col-span-6 md:col-span-2" isMismatched={!!mismatches['Kabupaten']} />
-                        <InfoField label="Kecamatan" value={schoolInfo.Kecamatan} colSpan="col-span-6 md:col-span-2" isMismatched={!!mismatches['Kecamatan']} />
-                        <InfoField label="Kelurahan/Desa" value={schoolInfo['Kelurahan/Desa']} colSpan="col-span-6 md:col-span-2" isMismatched={false} />
-                        <InfoField label="Jenjang" value={schoolInfo.Jenjang} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
-                        <InfoField label="Bentuk" value={schoolInfo.Bentuk} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
-                        <InfoField label="Sekolah" value={schoolInfo.Sekolah} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
-                        <InfoField label="Formal" value={schoolInfo.Formal} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
+                        <InfoField label="Provinsi" value={schoolInfo.Provinsi || ''} colSpan="col-span-6 md:col-span-2" isMismatched={false} />
+                        <InfoField label="Kabupaten" value={schoolInfo.Kabupaten || ''} colSpan="col-span-6 md:col-span-2" isMismatched={!!mismatches['Kabupaten']} />
+                        <InfoField label="Kecamatan" value={schoolInfo.Kecamatan || ''} colSpan="col-span-6 md:col-span-2" isMismatched={!!mismatches['Kecamatan']} />
+                        <InfoField label="Kelurahan/Desa" value={schoolInfo['Kelurahan/Desa'] || ''} colSpan="col-span-6 md:col-span-2" isMismatched={false} />
+                        <InfoField label="Jenjang" value={schoolInfo.Jenjang || ''} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
+                        <InfoField label="Bentuk" value={schoolInfo.Bentuk || ''} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
+                        <InfoField label="Sekolah" value={schoolInfo.Sekolah || ''} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
+                        <InfoField label="Formal" value={schoolInfo.Formal || ''} colSpan="col-span-4 md:col-span-1" isMismatched={false} />
                     </div>
                     <div className="grid grid-cols-12 gap-4">
-                        <InfoField label="PIC" value={schoolInfo.PIC} colSpan="col-span-6 md:col-span-2" isMismatched={!!mismatches['PIC']} />
-                        <InfoField label="Telp" value={schoolInfo['Telp PIC']} colSpan="col-span-6 md:col-span-2" isMismatched={false} />
-                        <InfoField label="Resi Pengiriman" value={schoolInfo['Resi Pengiriman']} colSpan="col-span-12 md:col-span-2" isMismatched={false} />
-                        <InfoField label="Serial Number" value={schoolInfo['Serial Number']} colSpan="col-span-12 md:col-span-3" isMismatched={false} />
-                        <InfoField label="Status" value={schoolInfo.Status} colSpan="col-span-12 md:col-span-3" isMismatched={false} />
+                        <InfoField label="PIC" value={schoolInfo.PIC || ''} colSpan="col-span-6 md:col-span-2" isMismatched={!!mismatches['PIC']} />
+                        <InfoField label="Telp" value={schoolInfo['Telp PIC'] || ''} colSpan="col-span-6 md:col-span-2" isMismatched={false} />
+                        <InfoField label="Resi Pengiriman" value={schoolInfo['Resi Pengiriman'] || ''} colSpan="col-span-12 md:col-span-2" isMismatched={false} />
+                        <InfoField label="Serial Number" value={schoolInfo['Serial Number'] || ''} colSpan="col-span-12 md:col-span-3" isMismatched={false} />
+                        <InfoField label="Status" value={schoolInfo.Status || ''} colSpan="col-span-12 md:col-span-3" isMismatched={false} />
                     </div>
                 </div>
                 <div>
@@ -110,7 +111,7 @@ export default function DkmDetails({ data }: { data: DkmData }) {
                         <span className="font-semibold text-blue-600">Rincian Proses</span>
                         <span className={`transform transition-transform ${isProsesOpen ? 'rotate-180' : ''}`}>▼</span>
                     </button>
-                    {isProsesOpen && ( <div className="p-3 mt-2 border rounded-md max-h-60 overflow-y-auto text-xs"> <table className="table-auto w-full"><thead><tr className="text-left bg-gray-50"><th className="p-2">Tanggal</th><th className="p-2">Status</th><th className="p-2">Keterangan</th></tr></thead><tbody>{processHistory.map((item: any, index: number) => (<tr key={index} className="border-t hover:bg-gray-50"><td className="p-2">{item.tanggal}</td><td className="p-2">{item.status}</td><td className="p-2">{item.keterangan}</td></tr>))}</tbody></table></div>)}
+                    {isProsesOpen && ( <div className="p-3 mt-2 border rounded-md max-h-60 overflow-y-auto text-xs"> <table className="table-auto w-full"><thead><tr className="text-left bg-gray-50"><th className="p-2">Tanggal</th><th className="p-2">Status</th><th className="p-2">Keterangan</th></tr></thead><tbody>{processHistory.map((item: HisenseProcessHistory, index: number) => (<tr key={index} className="border-t hover:bg-gray-50"><td className="p-2">{item.tanggal}</td><td className="p-2">{item.status}</td><td className="p-2">{item.keterangan}</td></tr>))}</tbody></table></div>)}
                 </div>
                 <div>
                     <button onClick={() => setIsDokumentasiOpen(!isDokumentasiOpen)} className="w-full flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
