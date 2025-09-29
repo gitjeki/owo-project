@@ -1,0 +1,322 @@
+{
+    "datadik": {
+        "id": "40360B13-2CF5-E011-BAC7-47093E611CC3",
+        "name": "SD NEGERI 1 BAGAWAT",
+        "address": "Blok Tegalgede Dusun Babakan",
+        "kecamatan": "Kec. Selajambe",
+        "kabupaten": "Kab. Kuningan",
+        "provinsi": "Prov. Jawa Barat",
+        "kepalaSekolah": "Didi",
+        "ptk": [
+            {
+                "ptk_terdaftar_id": "b03067fc-2597-4291-af23-c258e9e3f9c2",
+                "ptk_id": "c05bb33d-2cf5-e011-b8f0-596426098ca3",
+                "nama": "Didi",
+                "jenis_kelamin": "L",
+                "tanggal_lahir": "1972-05-02",
+                "nik": "3208150205720002",
+                "nuptk": "0834750652200042",
+                "nip": "197205022008011003",
+                "nrg": "130271829134",
+                "kepegawaian": "PNS",
+                "jenis_ptk": "Kepala Sekolah",
+                "jabatan_ptk": "Kepala Sekolah",
+                "nomor_surat_tugas": "821.28/KPTS.357-BKPSDM/2022",
+                "tanggal_surat_tugas": "2022-05-13",
+                "tmt_tugas": "2022-05-18",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "fa9f5e56-cf4f-4525-afe6-142b1fb2659d",
+                "ptk_id": "1e0fee3a-c798-e211-a425-bb099710033a",
+                "nama": "Atikah Rahmawati",
+                "jenis_kelamin": "P",
+                "tanggal_lahir": "1984-01-15",
+                "nik": "3208155501840001",
+                "nuptk": "8447762663300062",
+                "nip": "198401152008012002",
+                "nrg": "131272274186",
+                "kepegawaian": "PNS",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Agama Islam",
+                "nomor_surat_tugas": "824/KPTS.514-BKD/12",
+                "tanggal_surat_tugas": "2012-12-07",
+                "tmt_tugas": "2012-12-07",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "d43d0b99-eeed-429e-9a1a-4175fec6488e",
+                "ptk_id": "409fa63d-2cf5-e011-b99f-53b3fc5e8a4d",
+                "nama": "Leo Sudaryo",
+                "jenis_kelamin": "L",
+                "tanggal_lahir": "1981-08-06",
+                "nik": "3208150608810005",
+                "nuptk": "3138759661200033",
+                "nip": "198108062008011004",
+                "nrg": "130271492172",
+                "kepegawaian": "PNS",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "841.1/KPTS.662-BKD/2005",
+                "tanggal_surat_tugas": "2005-01-01",
+                "tmt_tugas": "2005-01-01",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "2b5e62d6-951e-4193-b5be-9dc707c8fac5",
+                "ptk_id": "403fad3d-2cf5-e011-9652-9b75002bfddb",
+                "nama": "Wawan Warsito",
+                "jenis_kelamin": "L",
+                "tanggal_lahir": "1982-02-05",
+                "nik": "3208150502820002",
+                "nuptk": "9537760662200012",
+                "nip": "198202052022211005",
+                "nrg": "240271363308",
+                "kepegawaian": "PPPK",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "814/KPTS.645-BKPSDM/2018",
+                "tanggal_surat_tugas": "2018-12-17",
+                "tmt_tugas": "2019-01-01",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "cca746db-7b95-4fdd-bade-fccb963d53fb",
+                "ptk_id": "8065a63d-2cf5-e011-a8cc-7720772b9526",
+                "nama": "Tarmah",
+                "jenis_kelamin": "P",
+                "tanggal_lahir": "1969-09-15",
+                "nik": "3208155509690002",
+                "nuptk": "5247747649300063",
+                "nip": "196909152001122001",
+                "nrg": "130271549143",
+                "kepegawaian": "PNS",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "821/248-TT/Kab",
+                "tanggal_surat_tugas": "1998-05-01",
+                "tmt_tugas": "1998-05-01",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "b2b8cd55-a444-4c8c-ad8c-4a5a588fca63",
+                "ptk_id": "c08ba63d-2cf5-e011-8227-ad1f4e33117b",
+                "nama": "Omo",
+                "jenis_kelamin": "L",
+                "tanggal_lahir": "1973-03-23",
+                "nik": "3208152303730002",
+                "nuptk": "1655751653200042",
+                "nip": "197303232008011003",
+                "nrg": "130271531144",
+                "kepegawaian": "PNS",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "841.1/KPTS.662-BKD/2003",
+                "tanggal_surat_tugas": "2003-10-01",
+                "tmt_tugas": "2003-10-01",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "103a93da-3499-4df8-b5fe-3127f68e5a9c",
+                "ptk_id": "4078a63d-2cf5-e011-b6d1-3b4dfc009a99",
+                "nama": "Judin",
+                "jenis_kelamin": "L",
+                "tanggal_lahir": "1969-01-10",
+                "nik": "3208151001690002",
+                "nuptk": "8442747650200032",
+                "nip": "196901102007011017",
+                "nrg": "130271887147",
+                "kepegawaian": "PNS",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "813/KPTS-388",
+                "tanggal_surat_tugas": "2000-11-01",
+                "tmt_tugas": "2000-11-01",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "ec9e078b-6861-4b06-8e9c-854ce6b89752",
+                "ptk_id": "19ba5702-83ce-11e3-8552-0f6ed557404c",
+                "nama": "Uyati",
+                "jenis_kelamin": "P",
+                "tanggal_lahir": "1979-06-27",
+                "nik": "3208156706790001",
+                "nuptk": "0959757659130082",
+                "nip": "197906272022212002",
+                "nrg": "210271145656",
+                "kepegawaian": "PPPK",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "800/VIII/SD/2010",
+                "tanggal_surat_tugas": "2010-10-18",
+                "tmt_tugas": "2008-08-25",
+                "ptk_induk": "Ya",
+                "last_update": "2025-07-22T00:00:00"
+            },
+            {
+                "ptk_terdaftar_id": "748af169-77ad-4860-9a44-686d5829076b",
+                "ptk_id": "8c98592b-025b-4d1f-a42b-358949588273",
+                "nama": "LILIS SRIWIDIANINGSIH",
+                "jenis_kelamin": "P",
+                "tanggal_lahir": "1993-02-27",
+                "nik": "3208156702930003",
+                "nuptk": null,
+                "nip": null,
+                "nrg": null,
+                "kepegawaian": "Guru Honor Sekolah",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "412.2/03-SDN 1 BGWT//VIII/2023",
+                "tanggal_surat_tugas": "2023-07-01",
+                "tmt_tugas": "2024-07-01",
+                "ptk_induk": "Ya",
+                "last_update": "2025-08-07T09:50:07.903000"
+            },
+            {
+                "ptk_terdaftar_id": "1e10cfb1-ebc7-4377-befb-12c74b22a64a",
+                "ptk_id": "b27a80ee-e30c-4c48-9a15-a23ca172a655",
+                "nama": "IRA ANGRAENY",
+                "jenis_kelamin": "P",
+                "tanggal_lahir": "1992-06-09",
+                "nik": "3208154906920002",
+                "nuptk": "2941770671130112",
+                "nip": null,
+                "nrg": null,
+                "kepegawaian": "Honor Daerah TK.II Kab/Kota",
+                "jenis_ptk": "Guru",
+                "jabatan_ptk": "Guru Kelas",
+                "nomor_surat_tugas": "400.3.5.1/17-SD/IX/2024",
+                "tanggal_surat_tugas": "2024-09-27",
+                "tmt_tugas": "2024-09-27",
+                "ptk_induk": "Ya",
+                "last_update": "2025-08-07T09:50:07.903000"
+            }
+        ]
+    },
+    "hisense": {
+        "isGreen": false,
+        "schoolInfo": {
+            "NPSN": "20213148",
+            "Nama": "SD NEGERI 1 BAGAWAT",
+            "Alamat": "Blok Tegalgede Dusun Babakan",
+            "Provinsi": "Prov. Jawa Barat",
+            "Kabupaten": "Kab. Kuningan",
+            "Kecamatan": "Kec. Selajambe",
+            "Kelurahan/Desa": "Bagawat",
+            "Jenjang": "SD",
+            "Bentuk": "SD",
+            "Sekolah": "Negeri",
+            "Formal": "Formal",
+            "PIC": "Didi",
+            "Telp PIC": "082115470789",
+            "Resi Pengiriman": "1009200902004068",
+            "Serial Number": "3TB75B25240N0 184HSJ0089",
+            "Status": "REVIU APIP"
+        },
+        "images": {
+            "Foto Plang Sekolah": "https://nextlogistik.com/wms/assets/upd/PPHI2509020001929250915160554.jpg",
+            "Foto Box & PIC": "https://nextlogistik.com/wms/assets/upd/PBHI2509020001929250915160557.jpg",
+            "Foto Kelengkapan Unit": "https://nextlogistik.com/wms/assets/upd/PKHI2509020001929250915160605.jpg",
+            "Foto Proses Instalasi": "https://nextlogistik.com/wms/assets/upd/PDHI2509020001929250915160601.jpg",
+            "Foto Serial Number": "https://nextlogistik.com/wms/assets/upd/PSHI2509020001929250915160610.jpg",
+            "Foto Training": "https://nextlogistik.com/wms/assets/upd/PTHI2509020001929250915160614.jpg",
+            "Foto BAPP Hal 1": "https://nextlogistik.com/wms/assets/upd/P1HI2509020001929250915160618.jpg",
+            "Foto BAPP Hal 2": "https://nextlogistik.com/wms/assets/upd/P2HI2509020001929250915160622.jpg"
+        },
+        "processHistory": [
+            {
+                "tanggal": "2025-09-02 01:54",
+                "status": "PICKUP RUNSHEET",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 02:15",
+                "status": "PEMBUATAN ORDER PENGIRIMAN",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 02:31",
+                "status": "PENUGASAN KE PENGEMUDI",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 02:33",
+                "status": "SERAH TERIMA DARI CROSSDOCK",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 11:48",
+                "status": "PROSES MUAT",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 12:01",
+                "status": "PROSES MUAT",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 13:40",
+                "status": "SELESAI MUAT",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-02 13:41",
+                "status": "BERANGKAT DARI CROSSDOCK",
+                "keterangan": "DC KARAWANG"
+            },
+            {
+                "tanggal": "2025-09-08 11:56",
+                "status": "DITERIMA DITUJUAN",
+                "keterangan": "SELAJAMBE, SELAJAMBE, KAB KUNINGAN"
+            },
+            {
+                "tanggal": "2025-09-13 07:00:00",
+                "status": "PROSES INSTALASI",
+                "keterangan": "TEKNISI : Rangga - 082125666824"
+            },
+            {
+                "tanggal": "2025-09-15 16:06:23",
+                "status": "INSTALASI SELESAI",
+                "keterangan": ""
+            },
+            {
+                "tanggal": "2025-09-16 13:38:20",
+                "status": "REVIU APIP",
+                "keterangan": "AR2508300001 - TERMIN 1"
+            },
+            {
+                "tanggal": "2025-09-16 18:06:25",
+                "status": "DATA DISETUJUI oleh : Jose Febryan Limbor",
+                "keterangan": ""
+            },
+            {
+                "tanggal": "2025-09-26 08:08:28",
+                "status": "DATA DISETUJUI oleh : Astrie Nurcahyati Ayuningrum",
+                "keterangan": ""
+            }
+        ],
+        "q": "HI2509020001929",
+        "npsn": "20213148",
+        "iprop": "",
+        "ikab": "",
+        "ikec": "",
+        "iins": "",
+        "ijenjang": "SD",
+        "ibp": "",
+        "iss": "",
+        "isf": "Formal",
+        "istt": "",
+        "itgl": "",
+        "itgla": "",
+        "itgle": "",
+        "ipet": "",
+        "ihnd": ""
+    }
+}

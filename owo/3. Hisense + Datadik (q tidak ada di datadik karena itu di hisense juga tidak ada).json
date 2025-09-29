@@ -1,0 +1,9 @@
+{
+    "datadik": {
+        "error": "Cannot read properties of undefined (reading '0')"
+    },
+    "hisense": {
+        "isGreen": false,
+        "nextPath": null
+    }
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Login Hisense
+  type: http
+  seq: 4
+}
+
+post {
+  url: https://owo-api-production.up.railway.app/hisense/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "josesd12",
+    "password": "limbor12"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,28 +1,14 @@
 "use client";
 
 import { useRef, useState, useMemo } from 'react';
-import type { DkmData } from '@/context/AppProvider';
+import type { DkmData, Ptk } from '@/context/AppProvider';
 import { useDraggable } from '@/hooks/useDraggable';
 import Fuse from 'fuse.js';
 
-interface Ptk {
-  nama: string;
-  jabatan_ptk?: string;
-  jenis_ptk?: string;
-}
-
-interface SchoolData {
-  address: string;
-  kecamatan: string;
-  kabupaten: string;
-  kepalaSekolah: string;
-  name: string;
-}
-
 interface StickyInfoBoxProps {
-  formData: DkmData['schoolInfo'];
-  apiData: SchoolData;
-  ptkList: Ptk[];
+  formData: DkmData['hisense']['schoolInfo'];
+  apiData: DkmData['datadik'];
+  ptkList: DkmData['datadik']['ptk'];
 }
 
 const cleanAndCompare = (val1?: string, val2?: string) => {
@@ -37,7 +23,8 @@ export default function StickyInfoBox({ formData, apiData, ptkList }: StickyInfo
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Ptk[]>([]);
 
-  const isAddressMatch = cleanAndCompare(formData.Alamat, apiData.address) &&
+  const isAddressMatch = !!formData &&
+    cleanAndCompare(formData.Alamat, apiData.address) &&
     cleanAndCompare(formData.Kecamatan, apiData.kecamatan) &&
     cleanAndCompare(formData.Kabupaten, apiData.kabupaten);
 
@@ -51,7 +38,7 @@ export default function StickyInfoBox({ formData, apiData, ptkList }: StickyInfo
       includeScore: true,
       threshold: 0.4,
     };
-    return new Fuse(ptkList, options);
+    return new Fuse(ptkList ?? [], options);
   }, [ptkList]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,13 +82,13 @@ export default function StickyInfoBox({ formData, apiData, ptkList }: StickyInfo
           borderTopRightRadius: '6px',
         }}
       >
-        <div style={{ fontWeight: 'bold', fontSize: '15px', color: '#0056b3' }}>{formData.Nama}</div>
-        <div style={{ fontSize: '12px', color: '#555' }}>NPSN: {formData.NPSN}</div>
+        <div style={{ fontWeight: 'bold', fontSize: '15px', color: '#0056b3' }}>{formData?.Nama ?? ''}</div>
+        <div style={{ fontSize: '12px', color: '#555' }}>NPSN: {formData?.NPSN ?? ''}</div>
       </div>
 
       <div style={{ padding: '12px 18px' }}>
         <div style={{ fontWeight: 'bold', fontSize: '13px', color: '#555' }}>Serial Number</div>
-        <div style={{ fontSize: '16px', fontWeight: 600, color: '#000' }}>{formData['Serial Number']}</div>
+        <div style={{ fontSize: '16px', fontWeight: 600, color: '#000' }}>{formData?.['Serial Number']}</div>
         
         {/* ================= Alamat dari kedua sumber ================= */}
         <div style={{ marginTop: '12px', border: '1px solid #ccc', borderRadius: '4px', padding: '8px' }}>
@@ -109,7 +96,7 @@ export default function StickyInfoBox({ formData, apiData, ptkList }: StickyInfo
             Alamat (Form & API)
           </div>
           <div style={{ fontSize: '12px', color: '#333', lineHeight: '1.4' }}>
-            <b>Form:</b> {formData.Alamat}, {formData.Kecamatan}, {formData.Kabupaten}
+            <b>Form:</b> {formData?.Alamat}, {formData?.Kecamatan}, {formData?.Kabupaten}
           </div>
           <div style={{ fontSize: '12px', color: '#333', lineHeight: '1.4' }}>
             <b>API:</b> {apiData.address}, {apiData.kecamatan}, {apiData.kabupaten}

@@ -10,8 +10,8 @@ import React, {
 } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { validateHisenseCookie } from "@/helpers/HisenseCookie";
-import * as cheerio from "cheerio";
-import HisenseCookieInput from "@/components/HisenseCookieInput";
+
+import LoginComponent from "@/components/LoginComponent";
 import Sidebar from "@/components/Sidebar";
 
 const defaultEvaluationValues: Record<string, string> = {
@@ -29,24 +29,91 @@ const defaultEvaluationValues: Record<string, string> = {
   W: "Ya",
 };
 
+export interface Ptk {
+  ptk_terdaftar_id?: string;
+  ptk_id?: string;
+  nama?: string;
+  jenis_kelamin?: 'L' | 'P';
+  tanggal_lahir?: string;
+  nik?: string;
+  nuptk?: string | null;
+  nip?: string | null;
+  nrg?: string | null;
+  kepegawaian?: string;
+  jenis_ptk?: string;
+  jabatan_ptk?: string;
+  nomor_surat_tugas?: string;
+  tanggal_surat_tugas?: string;
+  tmt_tugas?: string;
+  ptk_induk?: 'Ya' | 'Tidak';
+  last_update?: string;
+}
+
+export interface DatadikData {
+  id?: string;
+  name?: string;
+  address?: string;
+  kecamatan?: string;
+  kabupaten?: string;
+  provinsi?: string;
+  kepalaSekolah?: string;
+  ptk?: Ptk[];
+  error?: string; // untuk kasus error response
+}
+
+export interface HisenseSchoolInfo {
+  NPSN?: string;
+  Nama?: string;
+  Alamat?: string;
+  Provinsi?: string;
+  Kabupaten?: string;
+  Kecamatan?: string;
+  "Kelurahan/Desa"?: string;
+  Jenjang?: string;
+  Bentuk?: string;
+  Sekolah?: string;
+  Formal?: string;
+  PIC?: string;
+  "Telp PIC"?: string;
+  "Resi Pengiriman"?: string;
+  "Serial Number"?: string;
+  Status?: string;
+  // tambahkan field lain jika ada
+}
+
+export interface HisenseProcessHistory {
+  tanggal?: string;
+  status?: string;
+  keterangan?: string;
+}
+
+export interface HisenseData {
+  isGreen: boolean;
+  nextPath?: string | null;
+  schoolInfo?: HisenseSchoolInfo;
+  images?: Record<string, string>;
+  processHistory?: HisenseProcessHistory[];
+  q?: string;
+  npsn?: string;
+  iprop?: string;
+  ikab?: string;
+  ikec?: string;
+  iins?: string;
+  ijenjang?: string;
+  ibp?: string;
+  iss?: string;
+  isf?: string;
+  istt?: string;
+  itgl?: string;
+  itgla?: string;
+  itgle?: string;
+  ipet?: string;
+  ihnd?: string;
+}
+
 export interface DkmData {
-  schoolInfo: { [key: string]: string };
-  images: { [key: string]: string };
-  processHistory: { tanggal: string; status: string; keterangan: string }[];
-  q: string;
-  npsn: string;
-  iprop: string;
-  ikab: string;
-  ikec: string;
-  iins: string;
-  ijenjang: string;
-  ibp: string;
-  iss: string;
-  isf: string;
-  istt: string;
-  itgl: string;
-  itgla: string;
-  itgle: string;
+  datadik: DatadikData;
+  hisense: HisenseData;
 }
 
 export interface SheetRow {
@@ -81,7 +148,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: ReactNode }) {
   const { data: session, status: sessionStatus } = useSession();
   const [verifierName, setVerifierName] = useState<string | null>(null);
-  const [showCookieModal, setShowCookieModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [cookieValid, setCookieValid] = useState(false);
 
   const [allPendingRows, setAllPendingRows] = useState<SheetRow[]>([]);
@@ -169,109 +236,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!validName) {
           setCookieValid(false);
           setVerifierName(null);
-          setShowCookieModal(true);
+          setShowLoginModal(true);
           setIsSubmitting(false);
           setError("Cookie Hisense kadaluarsa atau tidak valid.");
           return;
         }
 
-        const monitoringHtml = await (
-          await fetch("/api/hisense", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              path: `r_monitoring.php?inpsn=${npsn}`,
-              cookie,
-            }),
-          })
-        ).text();
-        const $ = cheerio.load(monitoringHtml);
+        const response = await fetch("https://owo-api-production.up.railway.app", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ q: npsn, cookie }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Gagal mengambil data dari API eksternal. Status: ${response.status}`);
+        }
+
+        const data: DkmData = await response.json();
 
         // === LOGIKA AUTO-SKIP DIMASUKKAN DI SINI ===
-        const firstRow = $(
-          "#main-content > div > div > div > div.table-container > div > table > tbody tr"
-        ).first();
-        const firstTdStyle = firstRow.find("td").first().attr("style");
-
-        if (!firstTdStyle || !firstTdStyle.includes("color:green")) {
+        if (!data.hisense.isGreen) {
           console.log(`Auto-skipping NPSN: ${npsn} karena warna bukan hijau.`);
           handleSkip(false);
           setIsFetchingDetails(false);
           return;
         }
 
-        const onClickAttribute = firstRow.attr("onclick");
-        const urlMatch = onClickAttribute?.match(/window\.open\('([^']*)'/);
-        let nextPath = urlMatch ? urlMatch[1] : null;
-        if (!nextPath)
-          throw new Error(
-            "Gagal mengekstrak URL detail dari halaman monitoring."
-          );
-
-        const queryString = nextPath.substring(nextPath.indexOf("?") + 1);
-        const dkmHtml = await (
-          await fetch("/api/hisense", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ path: nextPath, cookie }),
-          })
-        ).text();
-        const $dkm = cheerio.load(dkmHtml);
-        nextPath = "?" + queryString;
-        const schoolInfo: { [key: string]: string } = {};
-        $dkm('.filter-section input[type="text"]').each((_, el) => {
-          const label = $dkm(el)
-            .prev("label")
-            .text()
-            .trim()
-            .replace("Telp", "Telp PIC");
-          const value = $dkm(el).val() as string;
-          if (label) schoolInfo[label] = value;
-        });
-        const images: { [key: string]: string } = {};
-        $dkm("#flush-collapseTwo img").each((_, el) => {
-          const label = $dkm(el)
-            .closest(".card")
-            .find("label > b")
-            .text()
-            .trim();
-          const src = $dkm(el).attr("src");
-          if (label && src) images[label] = src;
-        });
-        const processHistory: {
-          tanggal: string;
-          status: string;
-          keterangan: string;
-        }[] = [];
-        $dkm("#flush-collapseOne tbody tr").each((_, row) => {
-          const columns = $dkm(row).find("td");
-          processHistory.push({
-            tanggal: $dkm(columns[0]).text().trim(),
-            status: $dkm(columns[1]).text().trim(),
-            keterangan: $dkm(columns[2]).text().trim(),
-          });
-        });
-
-        const finalData: DkmData = {
-          schoolInfo,
-          images,
-          processHistory,
-          q: new URLSearchParams(nextPath).get("q") || "",
-          npsn: schoolInfo["NPSN"] || "",
-          iprop: new URLSearchParams(nextPath).get("iprop") || "",
-          ikab: new URLSearchParams(nextPath).get("ikab") || "",
-          ikec: new URLSearchParams(nextPath).get("ikec") || "",
-          iins: new URLSearchParams(nextPath).get("iins") || "",
-          ijenjang: new URLSearchParams(nextPath).get("ijenjang") || "",
-          ibp: new URLSearchParams(nextPath).get("ibp") || "",
-          iss: new URLSearchParams(nextPath).get("iss") || "",
-          isf: new URLSearchParams(nextPath).get("isf") || "",
-          istt: new URLSearchParams(nextPath).get("istt") || "",
-          itgl: new URLSearchParams(nextPath).get("itgl") || "",
-          itgla: new URLSearchParams(nextPath).get("itgla") || "",
-          itgle: new URLSearchParams(nextPath).get("itgle") || "",
-        };
-        setDkmData(finalData);
+        setDkmData(data);
         setEvaluationForm(defaultEvaluationValues);
       } catch (err: unknown) {
         if (err instanceof Error) setError(err.message);
@@ -441,7 +432,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!validName) {
           setCookieValid(false);
           setVerifierName(null);
-          setShowCookieModal(true);
+          setShowLoginModal(true);
           setIsSubmitting(false);
           setError("Cookie Hisense kadaluarsa atau tidak valid.");
           return;
@@ -449,22 +440,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         let hisensePath = "r_dkm_apr_p.php?";
         const params: Record<string, string> = {
-          q: dkmData.q,
+          q: dkmData.hisense.q || "",
           s: "",
           v: "",
-          npsn: dkmData.npsn,
-          iprop: dkmData.iprop,
-          ikab: dkmData.ikab,
-          ikec: dkmData.ikec,
-          iins: dkmData.iins,
-          ijenjang: dkmData.ijenjang,
-          ibp: dkmData.ibp,
-          iss: dkmData.iss,
-          isf: dkmData.isf,
-          istt: dkmData.istt,
-          itgl: dkmData.itgl,
-          itgla: dkmData.itgla,
-          itgle: dkmData.itgle,
+          npsn: dkmData.hisense.npsn || "",
+          iprop: dkmData.hisense.iprop || "",
+          ikab: dkmData.hisense.ikab || "",
+          ikec: dkmData.hisense.ikec || "",
+          iins: dkmData.hisense.iins || "",
+          ijenjang: dkmData.hisense.ijenjang || "",
+          ibp: dkmData.hisense.ibp || "",
+          iss: dkmData.hisense.iss || "",
+          isf: dkmData.hisense.isf || "",
+          istt: dkmData.hisense.istt || "",
+          itgl: dkmData.hisense.itgl || "",
+          itgla: dkmData.hisense.itgla || "",
+          itgle: dkmData.hisense.itgle || "",
+          ipet: dkmData.hisense.ipet || "",
+          ihnd: dkmData.hisense.ihnd || "",
         };
 
         const allUpdates: Record<string, string> = {};
@@ -499,7 +492,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             action: "update",
             sheetId: process.env.NEXT_PUBLIC_SHEET_ID,
             rowIndex: currentRow.rowIndex,
-            updates: { ...allUpdates, ...evaluationForm },
+            updates: { ...evaluationForm },
             customReason:
               customReason && customReason != generateRejectionMessage()
                 ? customReason
@@ -539,32 +532,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [updateSheetAndProceed]
   );
 
-  useEffect(() => {
+  const authenticate = useCallback(async () => {
     const savedCookie = localStorage.getItem("hisense_cookie");
-    const savedName = localStorage.getItem("nama");
 
-    if (savedCookie && savedName) {
-      validateHisenseCookie(savedCookie).then((validName) => {
-        if (validName) {
-          setCookieValid(true);
-          setVerifierName(validName);
-          setShowCookieModal(false);
-        } else {
-          setCookieValid(false);
-          setVerifierName(null);
-          setShowCookieModal(true);
-        }
-      });
-    } else {
-      setShowCookieModal(true);
+    if (savedCookie) {
+      const validName = await validateHisenseCookie(savedCookie);
+      if (validName) {
+        setCookieValid(true);
+        setVerifierName(validName);
+        setShowLoginModal(false);
+        return;
+      }
     }
+
+    // If validation fails (which includes re-login attempt), show login modal.
+    setShowLoginModal(true);
   }, []);
 
-  const handleCookieSuccess = () => {
-    const savedName = localStorage.getItem("nama");
-    setVerifierName(savedName);
-    setCookieValid(true);
-    setShowCookieModal(false);
+  useEffect(() => {
+    authenticate();
+  }, [authenticate]);
+
+  const handleLoginSuccess = () => {
+    authenticate();
   };
 
   if (sessionStatus === "loading") {
@@ -574,20 +564,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  if (showCookieModal) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
-        <div className="bg-white p-6 rounded-2xl shadow-xl w-96 flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-gray-900">
-            Masukkan PHPSESSID
-          </h2>
-          <HisenseCookieInput onSuccess={handleCookieSuccess} />
-          <p className="text-sm text-black">
-            Cookie harus valid untuk melanjutkan.
-          </p>
-        </div>
-      </div>
-    );
+  if (showLoginModal) {
+    return <LoginComponent onLoginSuccess={handleLoginSuccess} />;
   }
   if (!session) {
     return (
