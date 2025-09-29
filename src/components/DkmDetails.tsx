@@ -64,8 +64,8 @@ export default function DkmDetails({ data }: { data: DkmData }) {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (currentImageIndex === null) return;
             if (event.key === 'Escape') setCurrentImageIndex(null);
-            if (event.key === 'ArrowRight') setCurrentImageIndex(prev => (prev! + 1) % imageList.length);
-            if (event.key === 'ArrowLeft') setCurrentImageIndex(prev => (prev! - 1 + imageList.length) % imageList.length);
+            if (event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') setCurrentImageIndex(prev => (prev! + 1) % imageList.length);
+            if (event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') setCurrentImageIndex(prev => (prev! - 1 + imageList.length) % imageList.length);
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
