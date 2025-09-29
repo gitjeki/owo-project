@@ -54,11 +54,11 @@ export async function POST(req: Request) {
       if (customReason) {
         data.push(
           {
-            range: `'Lembar Kerja'!W${rowIndex}`,
+            range: `'Lembar Kerja'!Y${rowIndex}`,
             values: [[customReason]],
           },
           {
-            range: `'Lembar Kerja'!V${rowIndex}`,
+            range: `'Lembar Kerja'!X${rowIndex}`,
             values: [["DITOLAK"]],
           }
         );
@@ -78,8 +78,8 @@ export async function POST(req: Request) {
               sheetId: 966309158,
               startRowIndex: rowIndex - 1,
               endRowIndex: rowIndex,
-              startColumnIndex: 7,
-              endColumnIndex: 22,
+              startColumnIndex: 9,
+              endColumnIndex: 24,
             },
             cell: {
               userEnteredFormat: {
@@ -98,8 +98,8 @@ export async function POST(req: Request) {
               sheetId: 966309158,
               startRowIndex: rowIndex - 1,
               endRowIndex: rowIndex,
-              startColumnIndex: 21,
-              endColumnIndex: 22,
+              startColumnIndex: 23,
+              endColumnIndex: 24,
             },
             rows: [
               {

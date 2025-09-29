@@ -15,18 +15,18 @@ import HisenseCookieInput from "@/components/HisenseCookieInput";
 import Sidebar from "@/components/Sidebar";
 
 const defaultEvaluationValues: Record<string, string> = {
-  H: "Sesuai",
-  I: "Sesuai",
   J: "Sesuai",
   K: "Sesuai",
   L: "Sesuai",
+  M: "Sesuai",
   N: "Sesuai",
-  O: "Lengkap",
-  Q: "Konsisten",
-  R: "Sesuai",
-  S: "Lengkap",
-  T: "Ada",
-  U: "Ya",
+  P: "Sesuai",
+  Q: "Lengkap",
+  S: "Konsisten",
+  T: "Sesuai",
+  U: "Lengkap",
+  V: "Ada",
+  W: "Ya",
 };
 
 export interface DkmData {
@@ -351,43 +351,48 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const generateRejectionMessage = useCallback(() => {
     const rejectionReasons: { [key: string]: string } = {
-      H: "(5A) Geo Tagging tidak sesuai",
-      I: "(4A) Foto sekolah tidak sesuai",
-      J: "(4C) Foto Box dan PIC tidak sesuai",
-      K: "(2A) Foto kelengkapan IFP tidak lengkap",
-      L: "(3B) Serial number yang diinput tidak sesuai dengan yang tertera pada IFP",
-      N: "(1L) Data BAPP sekolah tidak sesuai (cek Barcode atas dan NPSN dengan foto sekolah atau NPSN yang diinput)",
-      O: "(1D) Ceklis BAPP tidak lengkap pada halaman 1",
-      Q: "(1K) Data penanda tangan pada halaman 1 dan halaman 2 BAPP tidak konsisten",
-      R: "(1O) Stempel pada BAPP halaman 2 tidak sesuai dengan sekolahnya",
-      S: "(1Q) Ceklis pada BAPP halaman 2 tidak lengkap",
-      T: "(1S) Tidak adanya pihak sekolah yang mengikuti pelatihan",
-      U: "(1A) Simpulan BAPP pada hal 2 belum dipilih atau dicoret",
+      J: "(5A) Geo Tagging tidak sesuai",
+      K: "(4A) Foto plang sekolah tidak sesuai",
+      L: "(4C) Foto Box dan PIC tidak sesuai",
+      M: "(2A) Foto kelengkapan IFP tidak lengkap",
+      N: "(3B) Serial number yang diinput tidak sesuai dengan yang tertera pada IFP",
+      P: "(1L) Data BAPP sekolah tidak sesuai (cek Barcode atas dan NPSN dengan foto sekolah atau NPSN yang diinput)",
+      Q: "(1D) Ceklis BAPP tidak lengkap pada halaman 1",
+      S: "(1K) Data penanda tangan pada halaman 1 dan halaman 2 BAPP tidak konsisten",
+      T: "(1O) Stempel pada BAPP halaman 2 tidak sesuai dengan sekolahnya",
+      U: "(1Q) Ceklis pada BAPP halaman 2 tidak lengkap",
+      V: "(1S) Satuan Pendidikan yang Mengikuti Pelatihan, tidak ada dalam BAPP hal.2",
+      W: "(1A) Simpulan BAPP pada hal 2 belum dipilih atau dicoret",
     };
 
     const specificReasons: { [key: string]: { [key: string]: string } } = {
-      L: {
+      N: {
         "Tidak Terlihat":
           "(3A) Foto serial number pada belakang unit IFP tidak jelas",
         "Tidak Ada": "(3C) Foto Serial Number pada belakang unit IFP tidak ada",
       },
-      O: {
+      Q: {
         "Tidak Sesuai": "(1D) Ceklis BAPP tidak sesuai pada halaman 1",
         "BAPP Tidak Jelas": "(1M) BAPP Halaman 1 tidak terlihat jelas",
         "Surat Tugas Tidak Ada": "(1V) Nomor surat tugas pada halaman 1 tidak ada",
-      },
-      Q: {
-        "Tidak Terdaftar di datadik":
-          "(1C) Pihak sekolah yang menandatangani BAPP tidak terdaftar dalam data Dapodik",
-        "PIC tidak sama":
-          "(1U) PIC berbeda dari pihak sekolah di BAPP",
-      },
-      R: {
-        "Tidak Ada": "(1B) Tidak ada stempel sekolah pada BAPP",
+        "Diedit": "(1Y) BAPP Hal 1 tidak boleh diedit digital",
       },
       S: {
+        "Tidak Terdaftar di Datadik":
+          "(1C) Pihak sekolah yang menandatangani BAPP tidak terdaftar dalam data Dapodik",
+        "PIC Tidak Sama":
+          "(1U) PIC dari pihak sekolah berbeda dengan yang di BAPP",
+        "TTD Tidak Ada":
+          "(1X) Tidak ada tanda tangan dari pihak sekolah",
+      },
+      T: {
+        "Tidak Ada": "(1B) Tidak ada stempel sekolah pada BAPP",
+        "Tidak Sesuai Tempatnya": "(1W) Stempel tidak mengenai tanda tangan pihak sekolah",
+      },
+      U: {
         "Tidak Sesuai": "(1Q) Ceklis BAPP tidak sesuai pada halaman 2",
         "BAPP Tidak Jelas": "(1T) BAPP Halaman 2 tidak terlihat jelas",
+        "Diedit": "(1Z) BAPP Hal 2 tidak boleh diedit digital",
       },
     };
 

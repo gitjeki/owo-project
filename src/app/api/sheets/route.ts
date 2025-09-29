@@ -32,7 +32,7 @@ export async function GET() {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: sheetId,
-      range: "'Lembar Kerja'!A:W", // Pastikan nama sheet benar
+      range: "'Lembar Kerja'!A:Y", // Pastikan nama sheet benar
     });
 
     const values = response.data.values || [];
