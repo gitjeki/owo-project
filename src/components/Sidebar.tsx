@@ -3,18 +3,18 @@
 import { useAppContext } from "@/context/AppProvider";
 
 const defaultEvaluationValues: Record<string, string> = {
-  H: "Sesuai",
-  I: "Sesuai",
   J: "Sesuai",
   K: "Sesuai",
   L: "Sesuai",
+  M: "Sesuai",
   N: "Sesuai",
-  O: "Lengkap",
-  Q: "Konsisten",
-  R: "Sesuai",
-  S: "Lengkap",
-  T: "Ada",
-  U: "Ya",
+  P: "Sesuai",
+  Q: "Lengkap",
+  S: "Konsisten",
+  T: "Sesuai",
+  U: "Lengkap",
+  V: "Ada",
+  W: "Ya",
 };
 
 interface EvaluationField {
@@ -24,42 +24,42 @@ interface EvaluationField {
 }
 
 const evaluationFields: EvaluationField[] = [
-  { col: "H", label: "GEO TAGGING", options: ["Sesuai", "Tidak Sesuai"] },
-  { col: "I", label: "FOTO PAPAN NAMA", options: ["Sesuai", "Tidak Sesuai"] },
-  { col: "J", label: "FOTO BOX & PIC", options: ["Sesuai", "Tidak Sesuai"] },
+  { col: "J", label: "GEO TAGGING", options: ["Sesuai", "Tidak Sesuai"] },
+  { col: "K", label: "FOTO PAPAN NAMA", options: ["Sesuai", "Tidak Sesuai"] },
+  { col: "L", label: "FOTO BOX & PIC", options: ["Sesuai", "Tidak Sesuai"] },
   {
-    col: "K",
+    col: "M",
     label: "FOTO KELENGKAPAN UNIT",
     options: ["Sesuai", "Tidak Sesuai"],
   },
   {
-    col: "L",
+    col: "N",
     label: "FOTO SERIAL NUMBER",
     options: ["Sesuai", "Tidak Sesuai", "Tidak Ada", "Tidak Terlihat"],
   },
-  { col: "N", label: "Barcode BAPP", options: ["Sesuai", "Tidak Sesuai"] },
-  {
-    col: "O",
-    label: "Ceklis BAPP Hal 1",
-    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas", "Surat Tugas Tidak Ada"],
-  },
+  { col: "P", label: "BARCODE BAPP", options: ["Sesuai", "Tidak Sesuai"] },
   {
     col: "Q",
-    label: "Nama Penandatangan BAPP",
-    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di datadik", "PIC tidak sama"],
-  },
-  {
-    col: "R",
-    label: "Stempel",
-    options: ["Sesuai", "Tidak Sesuai", "Tidak Ada"],
+    label: "CEKLIS BAPP HAL 1",
+    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas", "Surat Tugas Tidak Ada","Diedit"],
   },
   {
     col: "S",
-    label: "Ceklis BAPP Hal 2",
-    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas"],
+    label: "NAMA PENANDATANGANAN BAPP",
+    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di Datadik", "PIC Tidak Sama", "TTD Tidak Ada"],
   },
-  { col: "T", label: "Peserta Pelatihan", options: ["Ada", "Tidak Ada"] },
-  { col: "U", label: "Kesimpulan Lengkap", options: ["Ya", "Tidak"] },
+  {
+    col: "T",
+    label: "STEMPEL",
+    options: ["Sesuai", "Tidak Sesuai", "Tidak Ada", "Tidak Sesuai Tempatnya"],
+  },
+  {
+    col: "U",
+    label: "CEKLIS BAPP HAL 2",
+    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas", "Diedit"],
+  },
+  { col: "V", label: "PESERTA PELATIHAN", options: ["Ada", "Tidak Ada"] },
+  { col: "W", label: "KESIMPULAN LENGKAP", options: ["Ya", "Tidak"] },
 ];
 
 interface RadioOptionProps {
