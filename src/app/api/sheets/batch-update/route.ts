@@ -50,6 +50,12 @@ export async function POST(req: Request) {
         range: `'Lembar Kerja'!${column}${rowIndex}`,
         values: [[value]],
       }));
+      if (updates && updates.N === "Sesuai") {
+      data.push({
+          range: `'Lembar Kerja'!I${rowIndex}`, 
+          values: [[`=H${rowIndex}`]], 
+        });
+      }
       // jika ada customReason, masukkan ke kolom W
       if (customReason) {
         data.push(
