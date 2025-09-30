@@ -141,6 +141,7 @@ export default function StickyInfoBox({ formData, apiData, ptkList }: StickyInfo
             {searchResults.map((ptk, i) => (
               <div key={i} style={{ padding: '8px', borderBottom: '1px solid #f0f0f0' }}>
                 <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#333' }}>{ptk.nama}</div>
+                <div style={{ fontSize: '11px', color: '#666' }}>{ptk.nip}</div>
                 <div style={{ fontSize: '11px', color: '#666' }}>{ptk.jabatan_ptk || ptk.jenis_ptk}</div>
               </div>
             ))}
