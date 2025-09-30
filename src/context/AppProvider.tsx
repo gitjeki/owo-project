@@ -361,6 +361,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "Tidak Terlihat":
           "(3A) Foto serial number pada belakang unit IFP tidak jelas",
         "Tidak Ada": "(3C) Foto Serial Number pada belakang unit IFP tidak ada",
+        "Diedit": "(1AB) Foto serial number tidak boleh diedit digital",
       },
       Q: {
         "Tidak Sesuai": "(1D) Ceklis BAPP tidak sesuai pada halaman 1",
