@@ -23,7 +23,7 @@ interface EvaluationField {
   options: string[];
 }
 
-const evaluationFields: EvaluationField[] = [
+export const evaluationFields: EvaluationField[] = [
   { col: "J", label: "GEO TAGGING", options: ["Sesuai", "Tidak Sesuai"] },
   { col: "K", label: "FOTO PAPAN NAMA", options: ["Sesuai", "Tidak Sesuai"] },
   { col: "L", label: "FOTO BOX & PIC", options: ["Sesuai", "Tidak Sesuai"] },
@@ -41,12 +41,26 @@ const evaluationFields: EvaluationField[] = [
   {
     col: "Q",
     label: "CEKLIS BAPP HAL 1",
-    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas", "Surat Tugas Tidak Ada","Diedit"],
+    options: [
+      "Lengkap",
+      "Tidak Lengkap",
+      "Tidak Sesuai",
+      "BAPP Tidak Jelas",
+      "Surat Tugas Tidak Ada",
+      "Diedit",
+    ],
   },
   {
     col: "S",
     label: "NAMA PENANDATANGANAN BAPP",
-    options: ["Konsisten", "Tidak Konsisten", "Tidak Terdaftar di Datadik", "PIC Tidak Sama", "TTD Tidak Ada", "NIP Tidak Ada"],
+    options: [
+      "Konsisten",
+      "Tidak Konsisten",
+      "Tidak Terdaftar di Datadik",
+      "PIC Tidak Sama",
+      "TTD Tidak Ada",
+      "NIP Tidak Ada",
+    ],
   },
   {
     col: "T",
@@ -56,7 +70,13 @@ const evaluationFields: EvaluationField[] = [
   {
     col: "U",
     label: "CEKLIS BAPP HAL 2",
-    options: ["Lengkap", "Tidak Lengkap", "Tidak Sesuai", "BAPP Tidak Jelas", "Diedit"],
+    options: [
+      "Lengkap",
+      "Tidak Lengkap",
+      "Tidak Sesuai",
+      "BAPP Tidak Jelas",
+      "Diedit",
+    ],
   },
   { col: "V", label: "PESERTA PELATIHAN", options: ["Ada", "Tidak Ada"] },
   { col: "W", label: "KESIMPULAN LENGKAP", options: ["Ya", "Tidak"] },
@@ -70,7 +90,7 @@ interface RadioOptionProps {
   disabled: boolean;
 }
 
-const RadioOption = ({
+export const RadioOption = ({
   field,
   option,
   checked,
