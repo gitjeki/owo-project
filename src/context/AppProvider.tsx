@@ -368,6 +368,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "BAPP Tidak Jelas": "(1M) BAPP Halaman 1 tidak terlihat jelas",
         "Surat Tugas Tidak Ada": "(1V) Nomor surat tugas pada halaman 1 tidak ada",
         "Diedit": "(1Y) BAPP Hal 1 tidak boleh diedit digital",
+        "Tanggal Tidak Ada": "(1F) Tanggal BAPP tidak diisi",
       },
       S: {
         "Tidak Terdaftar di Datadik":
@@ -387,6 +388,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "Tidak Sesuai": "(1Q) Ceklis BAPP tidak sesuai pada halaman 2",
         "BAPP Tidak Jelas": "(1T) BAPP Halaman 2 tidak terlihat jelas",
         "Diedit": "(1Z) BAPP Hal 2 tidak boleh diedit digital",
+        "Tanggal Tidak Ada": "(1F) Tanggal BAPP tidak diisi",
       },
     };
 
