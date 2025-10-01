@@ -345,7 +345,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       J: "(5A) Geo Tagging tidak sesuai",
       K: "(4A) Foto plang sekolah tidak sesuai",
       L: "(4C) Foto Box dan PIC tidak sesuai",
-      M: "(2A) Foto kelengkapan IFP tidak lengkap",
+      M: "(2A) Foto kelengkapan IFP tidak lengkap (Kabel HDMI; USB type A to B, stylus, remote)",
       N: "(3B) Serial number yang diinput tidak sesuai dengan yang tertera pada IFP",
       P: "(1L) Data BAPP sekolah tidak sesuai (cek Barcode atas dan NPSN dengan foto sekolah atau NPSN yang diinput)",
       Q: "(1D) Ceklis BAPP tidak lengkap pada halaman 1",
