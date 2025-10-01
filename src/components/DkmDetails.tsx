@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { DkmData } from "@/context/AppProvider";
 import StickyInfoBox from "./StickyInfoBox";
 import type { HisenseData, HisenseProcessHistory } from "@/context/AppProvider";
@@ -43,6 +43,8 @@ export default function DkmDetails({ data }: { data: DkmData }) {
     null
   );
 
+  const prosesRef = useRef<HTMLDivElement>(null);
+
   // Ambil data dari datadik dan hisense
   const datadik = data.datadik || {};
   const ptkList = datadik.ptk || [];
@@ -57,7 +59,19 @@ export default function DkmDetails({ data }: { data: DkmData }) {
     if (typeof val1 !== "string" || typeof val2 !== "string") return false;
     return val1.trim().toLowerCase() === val2.trim().toLowerCase();
   };
-
+  useEffect(() => {
+    processHistory.map((item: HisenseProcessHistory) => {
+      if (/DATA DITOLAK/.test(item.status!)) {
+        setIsProsesOpen(true);
+      }
+    });
+    // scroll otomatis setelah dibuka
+    setTimeout(() => {
+      if (prosesRef.current) {
+        prosesRef.current.scrollTop = prosesRef.current.scrollHeight;
+      }
+    }, 100); // kasih delay kecil supaya render selesai
+  }, [processHistory]);
   // Cek mismatch antar hisense dan datadik
   useEffect(() => {
     if (!schoolInfo || !datadik) return;
@@ -249,7 +263,10 @@ export default function DkmDetails({ data }: { data: DkmData }) {
             </span>
           </button>
           {isProsesOpen && (
-            <div className="p-3 mt-2 border rounded-md max-h-60 overflow-y-auto text-xs">
+            <div
+              ref={prosesRef}
+              className="p-3 mt-2 border rounded-md max-h-60 overflow-y-auto text-xs"
+            >
               {" "}
               <table className="table-auto w-full">
                 <thead>
@@ -261,13 +278,23 @@ export default function DkmDetails({ data }: { data: DkmData }) {
                 </thead>
                 <tbody>
                   {processHistory.map(
-                    (item: HisenseProcessHistory, index: number) => (
-                      <tr key={index} className="border-t hover:bg-gray-50">
-                        <td className="p-2">{item.tanggal}</td>
-                        <td className="p-2">{item.status}</td>
-                        <td className="p-2">{item.keterangan}</td>
-                      </tr>
-                    )
+                    (item: HisenseProcessHistory, index: number) => {
+                      const isDitolak = /DITOLAK/i.test(item.status || ""); // cek case-insensitive
+                      return (
+                        <tr
+                          key={index}
+                          className={`border-t hover:bg-gray-50 ${
+                            isDitolak
+                              ? "bg-red-100 text-red-700 font-semibold"
+                              : ""
+                          }`}
+                        >
+                          <td className="p-2">{item.tanggal}</td>
+                          <td className="p-2">{item.status}</td>
+                          <td className="p-2">{item.keterangan}</td>
+                        </tr>
+                      );
+                    }
                   )}
                 </tbody>
               </table>
