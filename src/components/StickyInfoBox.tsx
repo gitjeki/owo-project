@@ -215,6 +215,7 @@ export default function StickyInfoBox({
                 <div style={{ fontSize: "11px", color: "#666" }}>
                   NIP: {ptk.nip || "-"}
                 </div>
+
               </div>
             ))}
             {!searchQuery && (

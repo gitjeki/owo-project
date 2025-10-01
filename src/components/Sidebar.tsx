@@ -35,7 +35,7 @@ export const evaluationFields: EvaluationField[] = [
   {
     col: "N",
     label: "FOTO SERIAL NUMBER",
-    options: ["Sesuai", "Tidak Sesuai", "Tidak Ada", "Tidak Terlihat"],
+    options: ["Sesuai", "Tidak Sesuai", "Tidak Ada", "Tidak Terlihat", "Diedit"],
   },
   { col: "P", label: "BARCODE BAPP", options: ["Sesuai", "Tidak Sesuai"] },
   {
